@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Scriptoria – AI Film Pre-Production</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{margin:0;font-family:Arial;background:#0f172a;color:#fff}
+header{background:linear-gradient(135deg,#6d28d9,#9333ea);padding:20px;text-align:center}
+section{padding:30px}
+.card{background:#1e293b;padding:20px;border-radius:12px;margin-bottom:25px}
+h2,h3{color:#c4b5fd}
+label{display:block;margin-top:10px}
+input,textarea{width:100%;padding:10px;border-radius:6px;border:none;margin-top:5px}
+textarea{min-height:120px}
+button{margin-top:12px;padding:10px;width:100%;background:#7c3aed;color:#fff;border:none;border-radius:8px;cursor:pointer}
+button:hover{background:#6d28d9}
+.row{display:flex;gap:10px;margin-top:10px;align-items:center}
+.row input{flex:1}
+.addBtn{background:#22c55e}
+.removeBtn{background:#ef4444;width:45px}
+iframe{width:100%;height:300px;border:none;border-radius:10px}
+ul{list-style:none;padding:0}
+li{background:#334155;padding:10px;margin-top:8px;border-radius:6px}
+.success{color:#4ade80}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🎬 Scriptoria</h1>
+<p>Generative AI Film Pre-Production System</p>
+</header>
+
+<section>
+
+<!-- PROJECT -->
+<div class="card">
+<h2>Project Setup</h2>
+<input id="title" placeholder="Film Title">
+<input id="genre" placeholder="Genre">
+<input id="language" placeholder="Language">
+</div>
+
+<!-- LOCATION -->
+<div class="card">
+<h2>Primary Location Preview</h2>
+<iframe src="https://maps.google.com/maps?q=India&z=5&output=embed"></iframe>
+</div>
+
+<!-- CHARACTER & ARTIST MAPPING -->
+<div class="card">
+<h2>Character – Artist Mapping</h2>
+
+<div id="castContainer">
+  <div class="row">
+    <input placeholder="Character / Role (e.g. Baahubali)">
+    <input placeholder="Artist Name (e.g. Prabhas)">
+    <button class="removeBtn" onclick="removeRow(this)">➖</button>
+  </div>
+</div>
+
+<button class="addBtn" onclick="addCast()">➕ Add Character</button>
+
+<h3>Final Casting</h3>
+<ul id="castList"></ul>
+
+<button onclick="finalizeCast()">Finalize Casting</button>
+<p id="castMsg" class="success"></p>
+</div>
+
+<!-- SCRIPT -->
+<div class="card">
+<h2>Script Writing</h2>
+<textarea id="script" placeholder="FADE IN..."></textarea>
+<button onclick="aiScript()">🤖 AI Script Assist</button>
+</div>
+
+<!-- SCENE SCHEDULING -->
+<div class="card">
+<h2>Scene-wise Shoot Schedule</h2>
+
+<div id="sceneContainer">
+  <div class="row">
+    <input placeholder="Scene Description">
+    <input type="date">
+    <input placeholder="Location">
+    <button class="removeBtn" onclick="removeRow(this)">➖</button>
+  </div>
+</div>
+
+<button class="addBtn" onclick="addScene()">➕ Add Scene</button>
+
+<h3>Scheduled Scenes</h3>
+<ul id="sceneList"></ul>
+
+<button onclick="finalizeScenes()">Save Schedule</button>
+</div>
+
+<!-- EXPORT -->
+<div class="card">
+<h2>Export Pre-Production Report</h2>
+<button onclick="exportData()">Download Report</button>
+</div>
+
+</section>
+
+<script>
+function addCast(){
+  const row=document.createElement("div");
+  row.className="row";
+  row.innerHTML=`
+    <input placeholder="Character / Role">
+    <input placeholder="Artist Name">
+    <button class="removeBtn" onclick="removeRow(this)">➖</button>
+  `;
+  castContainer.appendChild(row);
+}
+
+function removeRow(btn){
+  btn.parentElement.remove();
+}
+
+function finalizeCast(){
+  castList.innerHTML="";
+  [...castContainer.children].forEach(r=>{
+    const c=r.children[0].value;
+    const a=r.children[1].value;
+    if(c && a){
+      const li=document.createElement("li");
+      li.textContent=c+" → "+a;
+      castList.appendChild(li);
+    }
+  });
+  castMsg.textContent="✔ Casting finalized successfully";
+}
+
+function addScene(){
+  const row=document.createElement("div");
+  row.className="row";
+  row.innerHTML=`
+    <input placeholder="Scene Description">
+    <input type="date">
+    <input placeholder="Location">
+    <button class="removeBtn" onclick="removeRow(this)">➖</button>
+  `;
+  sceneContainer.appendChild(row);
+}
+
+function finalizeScenes(){
+  sceneList.innerHTML="";
+  [...sceneContainer.children].forEach(r=>{
+    const s=r.children[0].value;
+    const d=r.children[1].value;
+    const l=r.children[2].value;
+    if(s && d && l){
+      const li=document.createElement("li");
+      li.textContent=`${s} | ${d} | ${l}`;
+      sceneList.appendChild(li);
+    }
+  });
+}
+
+function aiScript(){
+  script.value += "\n\n[AI Suggestion]\nAdd a high-impact confrontation scene before interval.";
+}
+
+function exportData(){
+  const text=
+`SCRIPTORIA REPORT
+
+Title: ${title.value}
+Genre: ${genre.value}
+Language: ${language.value}
+
+CAST:
+${castList.innerText}
+
+SCENE SCHEDULE:
+${sceneList.innerText}
+
+SCRIPT:
+${script.value}
+`;
+  const blob=new Blob([text],{type:"text/plain"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="scriptoria_report.txt";
+  a.click();
+}
+</script>
+
+</body>
+</html>
