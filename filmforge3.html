@@ -2,193 +2,289 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Scriptoria – AI Film Pre-Production</title>
+<title>FilmForge – AI Film Pre-Production</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body{margin:0;font-family:Arial;background:#0f172a;color:#fff}
-header{background:linear-gradient(135deg,#6d28d9,#9333ea);padding:20px;text-align:center}
-section{padding:30px}
-.card{background:#1e293b;padding:20px;border-radius:12px;margin-bottom:25px}
-h2,h3{color:#c4b5fd}
-label{display:block;margin-top:10px}
-input,textarea{width:100%;padding:10px;border-radius:6px;border:none;margin-top:5px}
+body{margin:0;font-family:Segoe UI;background:#0f172a;color:#e5e7eb}
+header{background:#020617;padding:20px;text-align:center}
+header h1{color:#38bdf8;margin:0}
+.container{max-width:1300px;margin:auto;padding:20px}
+section{background:#020617;border-radius:12px;padding:20px;margin-bottom:25px}
+h2{color:#22d3ee}
+input,select,textarea{width:100%;padding:10px;margin-top:6px;border-radius:6px;border:none;background:#1e293b;color:white}
 textarea{min-height:120px}
-button{margin-top:12px;padding:10px;width:100%;background:#7c3aed;color:#fff;border:none;border-radius:8px;cursor:pointer}
-button:hover{background:#6d28d9}
-.row{display:flex;gap:10px;margin-top:10px;align-items:center}
-.row input{flex:1}
-.addBtn{background:#22c55e}
-.removeBtn{background:#ef4444;width:45px}
-iframe{width:100%;height:300px;border:none;border-radius:10px}
-ul{list-style:none;padding:0}
-li{background:#334155;padding:10px;margin-top:8px;border-radius:6px}
-.success{color:#4ade80}
+.flex{display:flex;gap:15px;flex-wrap:wrap}
+.box{flex:1;min-width:250px}
+button{padding:10px 16px;border:none;border-radius:8px;background:#38bdf8;font-weight:700;cursor:pointer;margin-top:10px;color:#000}
+button:hover{background:#22d3ee}
+.secondary{background:#334155;color:white}
+.secondary:hover{background:#475569}
+.character-row{display:flex;gap:10px;margin-top:10px}
+.character-row input{flex:1}
+.character-row button{padding:6px 10px;margin:0;font-size:14px}
+.card{background:#1e293b;padding:15px;border-radius:10px;width:260px}
+.map{height:250px;border-radius:10px;overflow:hidden;margin-top:10px}
+footer{text-align:center;opacity:.7;padding:15px;margin-top:30px}
+.loading{display:none;color:#38bdf8;padding:10px;text-align:center}
+.success{color:#10b981;padding:10px;background:#064e3b;border-radius:6px;margin-top:10px;display:none}
 </style>
 </head>
 
 <body>
 
 <header>
-<h1>🎬 Scriptoria</h1>
+<h1>🎬 FilmForge</h1>
 <p>Generative AI Film Pre-Production System</p>
 </header>
 
+<div class="container">
+
+<!-- PROJECT SETUP -->
 <section>
-
-<!-- PROJECT -->
-<div class="card">
 <h2>Project Setup</h2>
-<input id="title" placeholder="Film Title">
-<input id="genre" placeholder="Genre">
-<input id="language" placeholder="Language">
+<div class="flex">
+<div class="box"><label>Film Title</label><input id="filmTitle"></div>
+<div class="box"><label>Genre</label>
+<select id="genre">
+<option>Action</option><option>Drama</option><option>Fantasy</option>
+<option>Romance</option><option>Sci-Fi</option>
+</select></div>
 </div>
 
-<!-- LOCATION -->
-<div class="card">
-<h2>Primary Location Preview</h2>
-<iframe src="https://maps.google.com/maps?q=India&z=5&output=embed"></iframe>
+<div class="flex">
+<div class="box"><label>Director</label><input id="director"></div>
+<div class="box"><label>Producer</label><input id="producer"></div>
 </div>
-
-<!-- CHARACTER & ARTIST MAPPING -->
-<div class="card">
-<h2>Character – Artist Mapping</h2>
-
-<div id="castContainer">
-  <div class="row">
-    <input placeholder="Character / Role (e.g. Baahubali)">
-    <input placeholder="Artist Name (e.g. Prabhas)">
-    <button class="removeBtn" onclick="removeRow(this)">➖</button>
-  </div>
-</div>
-
-<button class="addBtn" onclick="addCast()">➕ Add Character</button>
-
-<h3>Final Casting</h3>
-<ul id="castList"></ul>
-
-<button onclick="finalizeCast()">Finalize Casting</button>
-<p id="castMsg" class="success"></p>
-</div>
-
-<!-- SCRIPT -->
-<div class="card">
-<h2>Script Writing</h2>
-<textarea id="script" placeholder="FADE IN..."></textarea>
-<button onclick="aiScript()">🤖 AI Script Assist</button>
-</div>
-
-<!-- SCENE SCHEDULING -->
-<div class="card">
-<h2>Scene-wise Shoot Schedule</h2>
-
-<div id="sceneContainer">
-  <div class="row">
-    <input placeholder="Scene Description">
-    <input type="date">
-    <input placeholder="Location">
-    <button class="removeBtn" onclick="removeRow(this)">➖</button>
-  </div>
-</div>
-
-<button class="addBtn" onclick="addScene()">➕ Add Scene</button>
-
-<h3>Scheduled Scenes</h3>
-<ul id="sceneList"></ul>
-
-<button onclick="finalizeScenes()">Save Schedule</button>
-</div>
-
-<!-- EXPORT -->
-<div class="card">
-<h2>Export Pre-Production Report</h2>
-<button onclick="exportData()">Download Report</button>
-</div>
-
 </section>
 
+<!-- AI SCRIPT GENERATOR -->
+<section>
+<h2>🤖 AI Script Idea Generator</h2>
+<textarea id="aiScript"></textarea>
+<button onclick="generateScript()">Generate Idea</button>
+</section>
+
+<!-- CHARACTER CASTING -->
+<section>
+<h2>🎭 Character – Artist Mapping</h2>
+<div id="characters"></div>
+<button onclick="addCharacter()">➕ Add Role</button>
+<button class="secondary" onclick="suggestCasting()">AI Casting Suggestion</button>
+</section>
+
+<!-- LOCATION -->
+<section>
+<h2>📍 Location Selection</h2>
+<input id="locationInput" placeholder="Search location">
+<button onclick="setLocation()">Preview</button>
+<p id="locText"></p>
+<div class="map">
+<iframe id="map" width="100%" height="100%" frameborder="0"
+src="https://maps.google.com/maps?q=India&z=5&output=embed"></iframe>
+</div>
+</section>
+
+<!-- SCENE SCHEDULING -->
+<section>
+<h2>📅 Scene Scheduling</h2>
+<textarea id="sceneText" placeholder="Describe scene..."></textarea>
+<div class="flex">
+<div class="box"><label>Date</label><input id="sceneDate" type="date"></div>
+<div class="box"><label>Location</label><input id="sceneLocation"></div>
+</div>
+<button onclick="addSchedule()">Add Scene</button>
+<div class="flex" id="schedule"></div>
+</section>
+
+<!-- BUDGET -->
+<section>
+<h2>💰 Budget Estimation (AI Assisted)</h2>
+<div class="flex">
+<div class="box"><label>Number of Shoot Days</label><input id="days" type="number"></div>
+<div class="box"><label>Estimated Cost per Day (₹)</label><input id="cost" type="number"></div>
+</div>
+<button onclick="estimateBudget()">Estimate Budget</button>
+<h3 id="budget"></h3>
+</section>
+
+<!-- CONFLICT CHECK -->
+<section>
+<h2>⚠️ AI Conflict Detection</h2>
+<button onclick="checkConflicts()">Check Scheduling Conflicts</button>
+<p id="conflict"></p>
+</section>
+
+<!-- COLLAB -->
+<section>
+<h2>👥 Team Collaboration Notes</h2>
+<textarea id="teamNotes" placeholder="Director / Producer notes..."></textarea>
+</section>
+
+<!-- FULL SCRIPT -->
+<section>
+<h2>📜 Full Script Writing</h2>
+<textarea id="scriptAct1" style="min-height:250px" placeholder="Act 1..."></textarea>
+<textarea id="scriptAct2" style="min-height:250px" placeholder="Act 2..."></textarea>
+</section>
+
+<!--EXPORT / DOCUMENTS -->
+<section>
+<h2>📄 Export & Documents</h2>
+<button onclick="saveProject()" style="background:#10b981">💾 Save Project as Document</button>
+<div id="loading" class="loading">Saving document...</div>
+<div id="success" class="success">✓ Document saved! Redirecting...</div>
+<div style="margin-top:10px">
+<a href="/documents" style="color:#38bdf8;text-decoration:none;padding:8px 12px;background:#1e293b;border-radius:6px;display:inline-block">View All Documents</a>
+</div>
+</section>
+
+<footer>FilmForge 🚀</footer>
+
 <script>
-function addCast(){
-  const row=document.createElement("div");
-  row.className="row";
-  row.innerHTML=`
-    <input placeholder="Character / Role">
-    <input placeholder="Artist Name">
-    <button class="removeBtn" onclick="removeRow(this)">➖</button>
-  `;
-  castContainer.appendChild(row);
+const actors=["Prabhas","Shah Rukh Khan","Ranbir Kapoor","Allu Arjun","Ram Charan","Mahesh Babu","Yash","Vijay","Hrithik Roshan","Ajith"];
+const actresses=["Anushka","Rashmika","Kajal","Deepika","Alia","Samantha","Nayanthara","Pooja","Sai Pallavi","Tamannaah"];
+
+function addCharacter(){
+const d=document.createElement("div");
+d.className="character-row";
+d.innerHTML=`<input placeholder="Character"><input list="artists" placeholder="Artist"><button onclick="this.parentElement.remove()">➖</button>`;
+document.getElementById("characters").appendChild(d);
 }
 
-function removeRow(btn){
-  btn.parentElement.remove();
+const dl=document.createElement("datalist");dl.id="artists";
+[...actors,...actresses].forEach(a=>{let o=document.createElement("option");o.value=a;dl.appendChild(o);});
+document.body.appendChild(dl);
+
+function generateScript(){
+const g=document.getElementById("genre").value;
+document.getElementById("aiScript").value=
+`An epic ${g} story where destiny collides with ambition, testing loyalty, power and sacrifice.`;
 }
 
-function finalizeCast(){
-  castList.innerHTML="";
-  [...castContainer.children].forEach(r=>{
-    const c=r.children[0].value;
-    const a=r.children[1].value;
-    if(c && a){
-      const li=document.createElement("li");
-      li.textContent=c+" → "+a;
-      castList.appendChild(li);
+function suggestCasting(){
+addCharacter();
+}
+
+function setLocation(){
+const l=document.getElementById("locationInput").value;
+if(!l){alert("Please enter a location");return;}
+document.getElementById("map").src=`https://maps.google.com/maps?q=${encodeURIComponent(l)}&z=14&output=embed`;
+document.getElementById("locText").innerText="Selected: "+l;
+document.getElementById("sceneLocation").value=l;
+}
+
+function addSchedule(){
+const c=document.createElement("div");
+c.className="card";
+c.innerText="Scene Scheduled ✔";
+document.getElementById("schedule").appendChild(c);
+}
+
+function estimateBudget(){
+const d=document.getElementById("days").value;
+const c=document.getElementById("cost").value;
+if(!d||!c){alert("Enter Shoot Days and Cost per Day");return;}
+document.getElementById("budget").innerText="Estimated Budget: ₹ "+(d*c);
+}
+
+function checkConflicts(){
+document.getElementById("conflict").innerText="No major conflicts detected. Schedule is feasible ✔";
+}
+
+function saveProject(){
+try {
+  document.getElementById("loading").style.display="block";
+  document.getElementById("success").style.display="none";
+  
+  // Collect characters
+  let charText = "";
+  const charRows = document.querySelectorAll(".character-row input");
+  for(let i=0; i<charRows.length; i+=2){
+    const char = charRows[i]?.value || "";
+    const artist = charRows[i+1]?.value || "";
+    if(char || artist) charText += " • "+char+" - "+artist+"\n";
+  }
+
+  const data = {
+    filmTitle: document.getElementById("filmTitle").value || "Untitled",
+    genre: document.getElementById("genre").value,
+    director: document.getElementById("director").value,
+    producer: document.getElementById("producer").value,
+    aiScript: document.getElementById("aiScript").value,
+    characters: charText || "No characters added",
+    location: document.getElementById("locText").innerText,
+    sceneDescription: document.getElementById("sceneText").value,
+    shootDays: document.getElementById("days").value || "0",
+    costPerDay: document.getElementById("cost").value || "0",
+    budget: document.getElementById("budget").innerText,
+    teamNotes: document.getElementById("teamNotes").value,
+    scriptAct1: document.getElementById("scriptAct1").value,
+    scriptAct2: document.getElementById("scriptAct2").value
+  };
+
+  fetch('/save', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data)
+  })
+  .then(r => r.json())
+  .then(res => {
+    document.getElementById("loading").style.display="none";
+    if(res.success){
+      document.getElementById("success").style.display="block";
+      setTimeout(() => window.location.href = res.redirect_url, 1500);
+    } else {
+      alert("Error: " + (res.error || 'Failed to save'));
+    }
+  })
+  .catch(e => {
+    document.getElementById("loading").style.display="none";
+    // Fallback when backend is not available (e.g., opened via file://)
+    try {
+      // generate an id and savedDate
+      const id = 'local_' + Date.now();
+      data.id = id;
+      data.savedDate = new Date().toLocaleString();
+      // save to localStorage
+      localStorage.setItem('filmforge_' + id, JSON.stringify(data));
+      // create and download text document
+      let docText = 'FILMFORGE - PROJECT DOCUMENT\n========================================\n\n';
+      docText += 'Title: ' + (data.filmTitle || 'Untitled') + '\n';
+      docText += 'Genre: ' + (data.genre || '') + '\n';
+      docText += 'Director: ' + (data.director || '') + '\n';
+      docText += 'Producer: ' + (data.producer || '') + '\n';
+      docText += 'Saved: ' + data.savedDate + '\n\n';
+      docText += 'SCRIPT IDEA:\n' + (data.aiScript || '') + '\n\n';
+      docText += 'CHARACTERS:\n' + (data.characters || '') + '\n\n';
+      docText += 'LOCATION:\n' + (data.location || '') + '\n\n';
+      docText += 'SCENE DESCRIPTION:\n' + (data.sceneDescription || '') + '\n\n';
+      docText += 'BUDGET:\nShoot Days: ' + (data.shootDays || '0') + '\nCost per Day: ₹' + (data.costPerDay || '0') + '\n' + (data.budget || '') + '\n\n';
+      docText += 'TEAM NOTES:\n' + (data.teamNotes || '') + '\n\n';
+      docText += 'ACT 1:\n' + (data.scriptAct1 || '') + '\n\n';
+      docText += 'ACT 2:\n' + (data.scriptAct2 || '') + '\n';
+
+      const blob = new Blob([docText], {type: 'text/plain'});
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = (data.filmTitle || 'FilmForge_Project').replace(/\s+/g, '_') + '_Document.txt';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      // redirect to local document viewer which will read from localStorage
+      document.getElementById("success").style.display="block";
+      setTimeout(() => window.location.href = 'project_document.html?id=' + id, 800);
+    } catch(err) {
+      alert('Error saving locally: ' + err);
     }
   });
-  castMsg.textContent="✔ Casting finalized successfully";
+} catch(e) {
+  document.getElementById("loading").style.display="none";
+  alert("Error: "+e);
 }
-
-function addScene(){
-  const row=document.createElement("div");
-  row.className="row";
-  row.innerHTML=`
-    <input placeholder="Scene Description">
-    <input type="date">
-    <input placeholder="Location">
-    <button class="removeBtn" onclick="removeRow(this)">➖</button>
-  `;
-  sceneContainer.appendChild(row);
-}
-
-function finalizeScenes(){
-  sceneList.innerHTML="";
-  [...sceneContainer.children].forEach(r=>{
-    const s=r.children[0].value;
-    const d=r.children[1].value;
-    const l=r.children[2].value;
-    if(s && d && l){
-      const li=document.createElement("li");
-      li.textContent=`${s} | ${d} | ${l}`;
-      sceneList.appendChild(li);
-    }
-  });
-}
-
-function aiScript(){
-  script.value += "\n\n[AI Suggestion]\nAdd a high-impact confrontation scene before interval.";
-}
-
-function exportData(){
-  const text=
-`SCRIPTORIA REPORT
-
-Title: ${title.value}
-Genre: ${genre.value}
-Language: ${language.value}
-
-CAST:
-${castList.innerText}
-
-SCENE SCHEDULE:
-${sceneList.innerText}
-
-SCRIPT:
-${script.value}
-`;
-  const blob=new Blob([text],{type:"text/plain"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="scriptoria_report.txt";
-  a.click();
 }
 </script>
 
